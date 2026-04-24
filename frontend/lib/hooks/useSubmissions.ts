@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 import { QueryKey, keepPreviousData, useQuery } from '@tanstack/react-query';
 
+import { buildSubmissionListParams } from '@/lib/buildSubmissionListParams';
 import { apiClient } from '@/lib/api-client';
 import {
   PaginatedResponse,
@@ -14,18 +15,7 @@ import {
 const SUBMISSIONS_QUERY_KEY = 'submissions';
 
 async function fetchSubmissions(filters: SubmissionListFilters) {
-
-  const params: Record<string, string | number | boolean> = {};
-
-  if (filters.status) params.status = filters.status;
-  if (filters.priority) params.priority = filters.priority;
-  if (filters.brokerId) params.brokerId = filters.brokerId;
-  if (filters.companySearch) params.companySearch = filters.companySearch;
-  if (filters.createdFrom) params.createdFrom = filters.createdFrom;
-  if (filters.createdTo) params.createdTo = filters.createdTo;
-  if (filters.hasDocuments !== undefined) params.hasDocuments = filters.hasDocuments;
-  if (filters.hasNotes !== undefined) params.hasNotes = filters.hasNotes;
-  if (filters.page && filters.page > 1) params.page = filters.page;
+  const params = buildSubmissionListParams(filters);
 
   const response = await apiClient.get<PaginatedResponse<SubmissionListItem>>('/submissions/', {
     params,
